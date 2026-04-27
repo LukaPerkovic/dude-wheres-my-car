@@ -10,6 +10,7 @@ class Settings(BaseSettings):
     rag_model: str = "claude-sonnet-4-6"
     agent_model: str = "claude-sonnet-4-6"
 
+    reranker_model: str = "cross-encoder/ms-marco-MiniLM-L-6-v2"
     embedding_model: str = "BAAI/bge-small-en-v1.5"
 
     chroma_persist_dir: str = "./chroma_db"

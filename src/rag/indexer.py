@@ -2,13 +2,18 @@
 
 from llama_index.core import SimpleDirectoryReader, VectorStoreIndex
 from llama_index.core import Settings as LlamaSettings
-from llama_index.core.node_parser import SentenceSplitter
+from llama_index.core.node_parser import SentenceSplitter, SentenceWindowNodeParser
 from llama_index.embeddings.huggingface import HuggingFaceEmbedding
 from llama_index.llms.anthropic import Anthropic
 
 from src.config import Settings
 
 settings = Settings()  # type: ignore
+
+parsers_map = {
+    "sentence_splitter": SentenceSplitter,
+    "window_mode": SentenceWindowNodeParser,
+}
 
 
 def initialize_llama_settings():
@@ -23,12 +28,13 @@ def initialize_llama_settings():
     )
 
 
-def load_and_chunk_documents(
-    data_dir: str = "data/static", chunk_size: int = 256, chunk_overlap: int = 50
-):
+def load_and_chunk_documents(parser_type: str, data_dir: str = "data/static", **kwargs):
     """Load the markdown files and split it into chunks"""
     documents = SimpleDirectoryReader(data_dir).load_data()
-    parser = SentenceSplitter(chunk_size=chunk_size, chunk_overlap=chunk_overlap)
+    parser_class = parsers_map.get(parser_type)
+    if not parser_class:
+        raise ValueError(f"Unknown parser type: {parser_type}")
+    parser = parser_class(**kwargs)
     nodes = parser.get_nodes_from_documents(documents)
     return nodes
 
