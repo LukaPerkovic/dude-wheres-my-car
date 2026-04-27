@@ -1,3 +1,5 @@
+"""Query engine that will search for input terms across vector DB"""
+
 from src.rag.indexer import (
     initialize_llama_settings,
     load_and_chunk_documents,

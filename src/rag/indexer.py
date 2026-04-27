@@ -1,6 +1,5 @@
 """LlamaIndex document loading and chunking."""
 
-from pathlib import Path
 from llama_index.core import SimpleDirectoryReader, VectorStoreIndex
 from llama_index.core import Settings as LlamaSettings
 from llama_index.core.node_parser import SentenceSplitter
@@ -9,7 +8,7 @@ from llama_index.llms.anthropic import Anthropic
 
 from src.config import Settings
 
-settings = Settings(anthropic_api_key="")
+settings = Settings()  # type: ignore
 
 
 def initialize_llama_settings():

@@ -17,3 +17,7 @@ wheels/
 *.tfstate.*
 .terraformrc
 terraform.rc
+
+
+# Dev tools
+.ruff*
