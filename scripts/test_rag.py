@@ -1,6 +1,6 @@
-from src.rag.query_engine import create_query_engine
+from src.rag.query_engine import create_vector_query_engine
 
-engine = create_query_engine()
+engine = create_vector_query_engine()
 
 questions = [
     "Walk me through the full step-by-step booking process from start to finish",

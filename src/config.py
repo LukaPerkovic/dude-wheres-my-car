@@ -13,4 +13,5 @@ class Settings(BaseSettings):
     reranker_model: str = "cross-encoder/ms-marco-MiniLM-L-6-v2"
     embedding_model: str = "BAAI/bge-small-en-v1.5"
 
+    sqlite_db_path = "./parking.db"
     chroma_persist_dir: str = "./chroma_db"
