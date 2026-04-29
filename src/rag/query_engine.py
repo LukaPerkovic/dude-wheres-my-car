@@ -15,9 +15,9 @@ from src.config import Settings
 from src.rag.indexer import (
     initialize_llama_settings,
     load_and_chunk_documents,
-    build_vector_index,
+    get_chroma_vector_store,
+    build_chroma_vector_index,
 )
-
 
 settings = Settings()  # type: ignore
 
@@ -28,8 +28,15 @@ def create_vector_query_engine(
     """Build the full RAG pipeline and return a query engine."""
 
     initialize_llama_settings()
-    nodes = load_and_chunk_documents(**kwargs)
-    index = build_vector_index(nodes)
+
+    vector_store = get_chroma_vector_store()
+    has_existing_data = vector_store._collection.count() > 0
+
+    if has_existing_data:
+        index = build_chroma_vector_index(nodes=None)
+    else:
+        nodes = load_and_chunk_documents(**kwargs)
+        index = build_chroma_vector_index(nodes)
 
     postprocessors = []
     if use_window:
@@ -49,13 +56,10 @@ def create_vector_query_engine(
 
 
 def create_sql_query_engine():
-    # SQLAlchemy engine — just a connection, no ORM
     engine = create_engine(f"sqlite:///{settings.sqlite_db_path}")
 
-    # LlamaIndex wrapper that inspects the schema automatically
     sql_database = SQLDatabase(engine)
 
-    # Natural language → SQL → result
     return NLSQLTableQueryEngine(
         sql_database=sql_database,
         tables=["spaces"],
