@@ -1,7 +1,6 @@
 """Runs once at startup. Populates Chroma + SQLite."""
 
 from src.rag.indexer import (
-    initialize_llama_settings,
     load_and_chunk_documents,
     build_chroma_vector_index,
     get_chroma_vector_store,
@@ -38,10 +37,16 @@ def init_chroma():
 def init_sqllite():
     "Create schema + seed data. Skips if table exists."
 
-    engine = create_engine(f"sqllite:///{settings.sqlite_db_path}")
-    with engine.connect() as conn:
-        conn.execute(text("""WIP"""))
+    engine = create_engine(f"sqlite:///{settings.sqlite_db_path}")
+    with engine.begin() as conn:
+        with open("data/dynamic/seed_spaces.sql") as f:
+            conn.execute(text(f.read()))
 
         conn.commit()
 
     print("SQL schema and data ready.")
+
+
+if __name__ == "__main__":
+    init_sqllite()
+    init_chroma()

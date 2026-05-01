@@ -15,4 +15,6 @@ class Settings(BaseSettings):
     guardrails_model: str = "cross-encoder/nli-deberta-v3-small"
 
     sqlite_db_path = "./parking.db"
-    chroma_persist_dir: str = "./chroma_db"
+
+    chroma_host: str = "chroma"
+    chroma_port: int = 8000

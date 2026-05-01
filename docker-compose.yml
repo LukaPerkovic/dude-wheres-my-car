@@ -1,0 +1,49 @@
+version: "3.9"
+
+services:
+  chroma:
+    image: chromadb/chroma:latest
+    container_name: chroma
+    ports:
+      - "8000:8000"
+    volumes:
+      - chroma_data:/chroma
+    environment:
+      -  CHROMA_PERSIST_DIRECTORY=/chroma
+      - ANONYMIZED_TELEMTRY=False
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8000/api/v1/heartbeat"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+  
+  init:
+    build: .
+    container_name: init
+    command: ["python", "scripts/init.py"]
+    depends_on:
+      chroma:
+        condition: service_healthy
+    volumes:
+      - ./parking.db:/app/parking.db
+      - ./data:app/data
+    env_file:
+      - .env
+    restart: "no"
+
+  app:
+    build: .
+    container_name: app
+    depends_on:
+      init:
+        condition: service_completed_successfully
+    volumes:
+      - ./parking.db:/app/parking.db
+      - ./data:/app/data
+    env_file:
+      - .env
+    command: ["python", "main.py"]
+
+volumes:
+  chroma_data:
+    

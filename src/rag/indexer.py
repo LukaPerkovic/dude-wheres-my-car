@@ -8,6 +8,7 @@ from llama_index.llms.anthropic import Anthropic
 from llama_index.vector_stores.chroma import ChromaVectorStore
 
 import chromadb
+from chromadb.config import Settings as ChromaSettings
 
 from src.config import Settings
 
@@ -44,7 +45,12 @@ def load_and_chunk_documents(parser_type: str, data_dir: str = "data/static", **
 
 def get_chroma_vector_store(collection_name: str = "parking_docs") -> ChromaVectorStore:
     """Create or connect to a persistent ChromaDB collection"""
-    chroma_client = chromadb.PersistentClient(path=settings.chroma_persist_dir)
+
+    chroma_client = chromadb.HttpClient(
+        host=settings.chroma_host,
+        port=settings.chroma_port,
+        settings=ChromaSettings(anonymized_telemetry=False),
+    )
 
     chroma_collection = chroma_client.get_or_create_collection(
         name=collection_name,
