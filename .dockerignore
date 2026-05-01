@@ -1,0 +1,36 @@
+# Git
+.git
+.gitignore
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pytest_cache/
+
+# Virtual environments
+.venv/
+.envrc
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+
+# Local state
+parking.db
+chroma_db/
+data/cache/
+logs/
+
+# Tests & eval (optional)
+tests/
+evaluation/
+
+# Docker artifacts
+Dockerfile
+docker-compose.yml
+
+# Secrets
+.env
