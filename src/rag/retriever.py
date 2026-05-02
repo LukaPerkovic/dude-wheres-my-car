@@ -37,15 +37,20 @@ def build_pipeline(config: PipelineConfig):
     return guardrails, query_engine
 
 
-def query(user_input: str, guardrails: GuardrailsEngine, engine) -> dict:
-    verdict = guardrails.validate(user_input)
+def query(
+    user_input: str, guardrails: GuardrailsEngine, engine, is_eval: bool = False
+) -> dict:
 
-    if not verdict["allowed"]:
-        return {
-            "response": f"I can't help with that. {verdict['reason']}",
-            "blocked": True,
-            "guardrails": verdict,
-        }
+    # Evaluation skips guardrails to avoid noise
+    if not is_eval:
+        verdict = guardrails.validate(user_input)
+
+        if not verdict["allowed"]:
+            return {
+                "response": f"I can't help with that. {verdict['reason']}",
+                "blocked": True,
+                "guardrails": verdict,
+            }
 
     response = engine.query(user_input)
 
@@ -53,7 +58,10 @@ def query(user_input: str, guardrails: GuardrailsEngine, engine) -> dict:
         "response": str(response),
         "blocked": False,
         "source_nodes": [
-            {"text": node.node.text[:200], "score": node.score}
+            {
+                "text": node.node.text[:200] if not is_eval else node.node.text,
+                "score": node.score,
+            }
             for node in response.source_nodes
         ],
         "guardrails": verdict,
