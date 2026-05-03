@@ -41,6 +41,8 @@ def query(
     user_input: str, guardrails: GuardrailsEngine, engine, is_eval: bool = False
 ) -> dict:
 
+    verdict = {"allowed": True, "reason": None} # Default
+    
     # Evaluation skips guardrails to avoid noise
     if not is_eval:
         verdict = guardrails.validate(user_input)

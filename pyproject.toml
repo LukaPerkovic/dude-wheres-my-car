@@ -8,6 +8,7 @@ dependencies = [
     "anthropic>=0.97.0",
     "chromadb>=1.5.8",
     "huggingface-hub[inference]==0.23.5",
+    "langchain>=1.2.17",
     "llama-index>=0.14.21",
     "llama-index-embeddings-huggingface>=0.7.0",
     "llama-index-llms-anthropic>=0.11.3",
