@@ -1,5 +1,3 @@
-"""Unit tests for src.rag.indexer"""
-
 from unittest.mock import MagicMock, patch
 
 import pytest

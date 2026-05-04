@@ -15,7 +15,7 @@ class ExtractedFields(BaseModel):
 
     name: Optional[str] = Field(None, description="First name if explicitly mentioned")
     surname: Optional[str] = Field(None, description="Last / family name if explicitly mentioned")
-    car_plate: Optional[str] = Field(None, description="Vehicle license plate if mentioned")
+    vehicle_plate: Optional[str] = Field(None, description="Vehicle license plate if mentioned")
     date_start: Optional[str] = Field(None, description="Reservation start date if mentioned")
     date_end: Optional[str] = Field(None, description="Reservation end date if mentioned")
 
@@ -23,7 +23,7 @@ class ExtractedFields(BaseModel):
 REQUIRED_FIELDS: dict[str, str] = {
     "name": "first name",
     "surname": "last name",
-    "car_plate": "license plate number",
+    "vehicle_plate": "license plate number",
     "date_start": "start date",
     "date_end": "end date",
 }

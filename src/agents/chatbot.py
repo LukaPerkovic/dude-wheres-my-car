@@ -1,6 +1,6 @@
 from langchain_core.messages import AIMessage
 from src.memory.state import ParkingState
-from src.rag.pipeline import query, GuardrailsEngine
+from src.rag.retriever import query, GuardrailsEngine
 
 def make_chatbot_node(guardrails: GuardrailsEngine, engine):
     def chatbot_node(state: ParkingState) -> dict:
