@@ -56,7 +56,8 @@ def approve_reservation(thread_id: str):
         raise HTTPException(404, "No pending reservations for this thread.")
 
     result = graph.invoke(
-        Command(resume={"approved": True})
+        Command(resume={"approved": True}),
+        config=config,
     )
     return {"status": "approved", "message": result["messages"][-1].content}
 
@@ -72,7 +73,8 @@ def reject_reservation(thread_id: str, body: AdminDecision = None):
 
     reason = body.reason if body else "No reason provided."
     result = graph.invoke(
-        Command(resume={"approved": False, "reason": reason})
+        Command(resume={"approved": False, "reason": reason}),
+        config=config
     )
     return {"status": "rejected", "message": result["messages"][-1].content}
 

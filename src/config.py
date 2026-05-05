@@ -15,6 +15,7 @@ class Settings(BaseSettings):
     guardrails_model: str = "cross-encoder/nli-deberta-v3-small"
 
     sqlite_db_path: str = "./parking.db"
+    approved_reservation_file: str = "./data/approved_reservations.txt"
 
     chroma_host: str = "chroma"
     chroma_port: int = 8000

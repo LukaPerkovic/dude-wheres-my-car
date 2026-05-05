@@ -15,3 +15,9 @@ class ParkingState(MessagesState):
         "idle", "collecting", "pending_approval", "approved", "rejected"
     ]
     reservation_id: Optional[str]
+    
+    approval_time: str | None
+    rejection_reason: str | None
+
+    persistence_status: Literal["not_started", "success", "failed"]
+    persistence_error: str | None
