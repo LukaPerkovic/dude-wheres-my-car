@@ -19,3 +19,6 @@ class Settings(BaseSettings):
 
     chroma_host: str = "chroma"
     chroma_port: int = 8000
+
+    mcp_server_url: str = "http://mcp-server:8000/sse"
+    mcp_auth_token: str = ""

@@ -5,7 +5,6 @@ from langgraph.checkpoint.memory import MemorySaver
 
 from src.memory.state import ParkingState
 from src.graph.edges import (route_intent,
-                             check_reservation_complete,
                              route_after_hitl,
                             route_after_persist)
 

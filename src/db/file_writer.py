@@ -1,29 +1,32 @@
-from pathlib import Path
+"""
+Reservation writer that delegates to the MCP server.
+"""
+
+from src.mcp.client import MCPReservationClient
 
 
-class LocalReservationWriter:
-    def __init__(self, output_path: str) -> None:
-        self.path = Path(output_path)
-        self.path.parent.mkdir(parents=True, exist_ok=True)
+class ReservationWriter:
+    """Writes approved reservations via the MCP server."""
 
-    @staticmethod
-    def _clean(value: str) -> str:
-        return str(value).replace("\n", " ").replace("\r", " ").replace("|", "/").strip()
+    def __init__(self, server_url: str = None, auth_token: str = None):
+        self.client = MCPReservationClient(
+            server_url=server_url,
+            auth_token=auth_token,
+        )
 
     def write_reservation(
         self,
-        *,
         name: str,
         vehicle_number: str,
         period: str,
         approval_time: str,
     ) -> None:
-        line = (
-            f"{self._clean(name)} | "
-            f"{self._clean(vehicle_number)} | "
-            f"{self._clean(period)} | "
-            f"{self._clean(approval_time)}\n"
+        result = self.client.write_reservation(
+            name=name,
+            vehicle_number=vehicle_number,
+            period=period,
+            approval_time=approval_time,
         )
 
-        with self.path.open("a", encoding="utf-8") as f:
-            f.write(line)
+        if result.startswith("ERROR"):
+            raise RuntimeError(result)

@@ -18,7 +18,7 @@ from src.graph.post_approval_nodes import (
     reject_response_node,
     persistence_failure_response_node,
 )
-from src.persistence.file_writer import LocalReservationWriter
+from src.db.file_writer import ReservationWriter
 
 
 settings = Settings()
@@ -59,7 +59,11 @@ reservation = ReservationAgent(llm=agent_llm)
 approval_request = ApprovalRequestNode(notification_channel=notification_channel)
 hitl = HITLAgent()
 
-writer = LocalReservationWriter(settings.approved_reservations_file)
+writer = ReservationWriter(
+    server_url=settings.mcp_server_url,
+    auth_token=settings.mcp_auth_token,
+)
+
 persist_reservation = PersistReservationNode(writer=writer)
 
 sqlite_conn = sqlite3.connect(settings.sqlite_db_path, check_same_thread=False)

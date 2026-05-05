@@ -17,6 +17,24 @@ services:
       timeout: 3s
       retries: 10
   
+  mcp-server:
+    build: .
+    container_name: mcp-server
+    command: ["python", "-m", "src.mcp.server"]
+    volumes:
+      - ./data:/app/data
+    env_file:
+      - .env
+    environment:
+      - RESERVATIONS_DATA_DIR=/app/data
+    expose:
+      - "8000"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')"]
+      interval: 5s
+      timeout: 3s
+      retries: 5    
+
   init:
     build: .
     container_name: init
@@ -37,11 +55,15 @@ services:
     depends_on:
       init:
         condition: service_completed_successfully
+      mcp-server:
+        condition: service_healthy
     volumes:
       - ./parking.db:/app/parking.db
       - ./data:/app/data
     env_file:
       - .env
+    ports:
+      - "8080:8080"
     command: ["python", "main.py"]
 
 volumes:

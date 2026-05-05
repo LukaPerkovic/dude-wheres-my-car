@@ -1,9 +1,12 @@
-from langchain_core.messages import AIMessage
+"""Post-approval graph nodes."""
 
+from langchain_core.messages import AIMessage
 from src.memory.state import ParkingState
 
 
 class PersistReservationNode:
+    """Calls the MCP-backed writer to persist an approved reservation."""
+
     def __init__(self, writer) -> None:
         self.writer = writer
 
@@ -11,7 +14,8 @@ class PersistReservationNode:
         reservation = state["reservation"]
 
         full_name = " ".join(
-            part for part in [
+            part
+            for part in [
                 reservation.get("name", "").strip(),
                 reservation.get("surname", "").strip(),
             ]
@@ -72,7 +76,8 @@ def persistence_failure_response_node(state: ParkingState) -> dict:
         "messages": [
             AIMessage(
                 content=(
-                    "Your reservation was approved, but I couldn't save it to storage.\n"
+                    "Your reservation was approved, but we couldn't save it.\n"
+                    "Please contact support with your "
                     f"Reservation ID: {state['reservation_id']}"
                 )
             )
