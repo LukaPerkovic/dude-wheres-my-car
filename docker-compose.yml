@@ -43,8 +43,7 @@ services:
       chroma:
         condition: service_healthy
     volumes:
-      - ./parking.db:/app/parking.db
-      - ./data:app/data
+      - ./data:/app/data
     env_file:
       - .env
     restart: "no"
@@ -58,13 +57,15 @@ services:
       mcp-server:
         condition: service_healthy
     volumes:
-      - ./parking.db:/app/parking.db
       - ./data:/app/data
     env_file:
       - .env
+    environment:
+      - ADMIN_USERNAME=${ADMIN_USERNAME}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD}
     ports:
       - "8080:8080"
-    command: ["python", "main.py"]
+    command: ["uvicorn", "server:app", "--host", "0.0.0.0", "--port", "8080"]
 
 volumes:
   chroma_data:

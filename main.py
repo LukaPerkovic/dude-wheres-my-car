@@ -67,6 +67,8 @@ writer = ReservationWriter(
 persist_reservation = PersistReservationNode(writer=writer)
 
 sqlite_conn = sqlite3.connect(settings.sqlite_db_path, check_same_thread=False)
+sqlite_conn.execute("PRAGMA journal_mode=WAL;")
+sqlite_conn.execute("PRAGMA busy_timeout=5000;")
 atexit.register(sqlite_conn.close)
 
 checkpointer = SqliteSaver(sqlite_conn)

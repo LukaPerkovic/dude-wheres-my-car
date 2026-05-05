@@ -1,3 +1,0 @@
-class NotificationChannel:
-    """WIP"""
-    pass

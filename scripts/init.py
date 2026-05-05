@@ -39,6 +39,8 @@ def init_sqllite():
 
     engine = create_engine(f"sqlite:///{settings.sqlite_db_path}")
     with engine.begin() as conn:
+        conn.execute(text("PRAGMA journal_mode=WAL;"))
+        conn.execute(text("PRAGMA busy_timeout=5000;"))
         with open("data/dynamic/seed_spaces.sql") as f:
             conn.execute(text(f.read()))
 

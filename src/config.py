@@ -22,3 +22,6 @@ class Settings(BaseSettings):
 
     mcp_server_url: str = "http://mcp-server:8000/sse"
     mcp_auth_token: str = ""
+
+    admin_username: str = "admin"
+    admin_password: str

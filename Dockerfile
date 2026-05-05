@@ -2,7 +2,7 @@ FROM python:3.13-slim
 
 ENV PYTHONDONTWRITEBYTECODE=1
 
-ENV PYTHONBUFFERED=1
+ENV PYTHONUNBUFFERED=1  
 
 WORKDIR /app
 
@@ -16,8 +16,10 @@ RUN pip install --updgrade pip \
 
 COPY pyproject.toml uv.lock ./
 
-RUN uv sync --system --frozen
+RUN uv sync --frozen --no-dev
+
+ENV PATH="/app/.venv/bin:$PATH"
 
 COPY . .
 
-CMD ["python", "main.py"]
+CMD ["uvicorn", "server:app", "--host", "0.0.0.0", "--port", "8080"]
