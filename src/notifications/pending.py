@@ -47,8 +47,7 @@ def list_pending_reservations(graph, sqlite_path: str) -> list[PendingReservatio
                 reservation_id=values.get("reservation_id"),
                 name=reservation.get("name", ""),
                 surname=reservation.get("surname", ""),
-                plate=reservation.get("car_plate")
-                    or reservation.get("vehicle_plate", ""),
+                plate=reservation.get("vehicle_plate", ""),
                 date_start=str(reservation.get("date_start", "")),
                 date_end=str(reservation.get("date_end", "")),
             )

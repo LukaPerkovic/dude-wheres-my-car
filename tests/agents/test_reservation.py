@@ -2,6 +2,7 @@ from unittest.mock import MagicMock
 from langchain_core.messages import HumanMessage
 import pytest
 
+
 @pytest.fixture
 def reservation_agent():
     from src.agents.reservation import ReservationAgent, ExtractedFields
@@ -14,7 +15,9 @@ def reservation_agent():
 
 
 def test_reservation_collecting_on_partial_data(reservation_agent):
-    result = reservation_agent({"messages": [HumanMessage(content="My name is Bob")], "reservation": {}})
+    result = reservation_agent(
+        {"messages": [HumanMessage(content="My name is Bob")], "reservation": {}}
+    )
 
     assert result["reservation_status"] == "collecting"
     assert result["reservation"]["name"] == "Bob"
@@ -28,9 +31,9 @@ def test_reservation_merge_skips_none_values():
         ExtractedFields(surname="Jones", vehicle_plate=None),
     )
 
-    assert merged["surname"] == "Jones"   # overwritten
-    assert merged["name"] == "Alice"      # preserved
-    assert "vehicle_plate" not in merged      # None not written
+    assert merged["surname"] == "Jones"  # overwritten
+    assert merged["name"] == "Alice"  # preserved
+    assert "vehicle_plate" not in merged  # None not written
 
 
 def test_reservation_get_missing_identifies_absent_fields():

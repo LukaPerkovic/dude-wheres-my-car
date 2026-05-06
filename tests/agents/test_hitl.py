@@ -7,6 +7,7 @@ import pytest
 @pytest.fixture
 def hitl_agent():
     from src.agents.hitl import HITLAgent
+
     return HITLAgent()
 
 

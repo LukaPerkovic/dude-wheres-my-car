@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   chroma:
     image: chromadb/chroma:latest
@@ -11,37 +9,30 @@ services:
     environment:
       -  CHROMA_PERSIST_DIRECTORY=/chroma
       - ANONYMIZED_TELEMTRY=False
-    healthcheck:
-      test: ["CMD", "wget", "-qO-", "http://localhost:8000/api/v1/heartbeat"]
-      interval: 5s
-      timeout: 3s
-      retries: 10
-  
+
   mcp-server:
     build: .
     container_name: mcp-server
-    command: ["python", "-m", "src.mcp.server"]
+    command:
+      ["uvicorn", "src.mcp_server.server:app", "--host", "0.0.0.0", "--port", "8000"]
     volumes:
       - ./data:/app/data
     env_file:
       - .env
-    environment:
-      - RESERVATIONS_DATA_DIR=/app/data
     expose:
-      - "8000"
+      - "8000" 
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')"]
       interval: 5s
       timeout: 3s
-      retries: 5    
+      retries: 5 
 
   init:
     build: .
     container_name: init
-    command: ["python", "scripts/init.py"]
+    command: ["python", "-m", "scripts.init"]
     depends_on:
-      chroma:
-        condition: service_healthy
+      - chroma
     volumes:
       - ./data:/app/data
     env_file:

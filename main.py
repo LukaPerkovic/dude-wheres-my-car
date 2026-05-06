@@ -12,7 +12,7 @@ from src.agents.hitl import HITLAgent
 from src.agents.approval_request import ApprovalRequestNode
 from src.graph.nodes import RouterNode
 from src.graph.workflow import build_graph
-from src.graph.post_approval_nodes import (
+from src.graph.post_approval_node import (
     PersistReservationNode,
     approve_response_node,
     reject_response_node,
@@ -20,8 +20,7 @@ from src.graph.post_approval_nodes import (
 )
 from src.db.file_writer import ReservationWriter
 
-
-settings = Settings()
+settings = Settings()  # type: ignore
 
 router_llm = ChatAnthropic(
     model=settings.router_model,
@@ -44,7 +43,7 @@ class LoggingNotificationChannel:
         print(" ADMIN APPROVAL REQUEST")
         print(f"   Reservation ID: {reservation_id}")
         print(f"   Name: {details.get('name')} {details.get('surname')}")
-        print(f"   Plate: {details.get('car_plate')}")
+        print(f"   Plate: {details.get('vehicle_plate')}")
         print(f"   Dates: {details.get('date_start')} → {details.get('date_end')}")
         print(f"{'='*50}\n")
         return True

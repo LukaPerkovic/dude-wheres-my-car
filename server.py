@@ -6,13 +6,13 @@ from pydantic import BaseModel
 from langchain_core.messages import HumanMessage
 from langgraph.types import Command
 
-from src.main import graph
+from main import graph
 from src.notifications.auth import require_admin
 from src.config import Settings
-from src.admin.pending import list_pending_reservations
+from src.notifications.pending import list_pending_reservations
 
 log = logging.getLogger(__name__)
-settings = Settings()
+settings = Settings()  # type: ignore
 
 app = FastAPI(title="Neo-Terra Parking Assistant")
 
@@ -37,6 +37,7 @@ def resume_graph_with_decision(
 class ChatRequest(BaseModel):
     message: str
     thread_id: str
+
 
 class ChatResponse(BaseModel):
     response: str
@@ -69,9 +70,9 @@ def chat(req: ChatRequest):
     is_waiting = bool(new_state.next)
 
     return ChatResponse(
-        response=result["messages"][-1].content,
-        is_waiting_for_admin=is_waiting
+        response=result["messages"][-1].content, is_waiting_for_admin=is_waiting
     )
+
 
 @app.post("/reservations/{thread_id}/approve")
 def approve_reservation(thread_id: str, _: str = Depends(require_admin)):
@@ -88,10 +89,10 @@ def approve_reservation(thread_id: str, _: str = Depends(require_admin)):
     return {"status": "approved", "message": result["messages"][-1].content}
 
 
-
 @app.post("/reservations/{thread_id}/reject")
-def reject_reservation(thread_id: str, body: AdminDecision = None,
-     _: str = Depends(require_admin)):
+def reject_reservation(
+    thread_id: str, body: AdminDecision = None, _: str = Depends(require_admin)
+):
     config = {"configurable": {"thread_id": thread_id}}
 
     state = graph.get_state(config)
@@ -100,8 +101,7 @@ def reject_reservation(thread_id: str, body: AdminDecision = None,
 
     reason = body.reason if body else "No reason provided."
     result = graph.invoke(
-        Command(resume={"approved": False, "reason": reason}),
-        config=config
+        Command(resume={"approved": False, "reason": reason}), config=config
     )
     return {"status": "rejected", "message": result["messages"][-1].content}
 
@@ -118,7 +118,6 @@ def admin_pending(_: str = Depends(require_admin)):
 @app.get("/admin", response_class=HTMLResponse)
 def admin_page():
     return ADMIN_HTML
-
 
 
 ADMIN_HTML = """\

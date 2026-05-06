@@ -11,12 +11,13 @@ from pathlib import Path
 from mcp.server.fastmcp import FastMCP
 
 DATA_DIR = Path(os.getenv("RESERVATIONS_DATA_DIR", "data"))
-RESERVATIONS_FILE = DATA_DIR /  "approved_reservations.txt"
+RESERVATIONS_FILE = DATA_DIR / "approved_reservations.txt"
 MCP_AUTH_TOKEN = os.getenv("MCP_AUTH_TOKEN", "")
 
 mcp = FastMCP(
     "ReservationWriter",
 )
+
 
 def _sanitize(value: str) -> str:
     """Strip pipe characters and excess whitespace to protect the file format."""
@@ -26,9 +27,10 @@ def _sanitize(value: str) -> str:
 def _validate_token(token: str) -> bool:
     """Constant-time token comparison to resist timing attacks."""
     import hmac
+
     if not MCP_AUTH_TOKEN:
         return True
-    
+
     return hmac.compare_digest(token, MCP_AUTH_TOKEN)
 
 
@@ -38,7 +40,7 @@ def write_reservation(
     vehicle_number: str,
     period: str,
     approval_time: str,
-    auth_token: str= "",
+    auth_token: str = "",
 ) -> str:
     """
     Write an approved reservation to the persistent text file.
@@ -56,7 +58,7 @@ def write_reservation(
 
     if not _validate_token(auth_token):
         return "ERROR: Invalid Auth token."
-    
+
     if not name or not vehicle_number or not period:
         return "ERROR: name, vehicle_number, and period are required"
 
@@ -78,6 +80,8 @@ def write_reservation(
 
     return f"OK: Reservation saved for {safe_name} ({safe_vehicle})."
 
+
+app = mcp.sse_app()
 
 if __name__ == "__main__":
     mcp.run()

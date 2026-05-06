@@ -2,7 +2,7 @@
 Reservation writer that delegates to the MCP server.
 """
 
-from src.mcp.client import MCPReservationClient
+from src.mcp_server.client import MCPReservationClient
 
 
 class ReservationWriter:

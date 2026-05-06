@@ -61,18 +61,18 @@ CREATE TABLE IF NOT EXISTS reservations (
 BEGIN TRANSACTION;
 
 -- Cities
-INSERT INTO city (id, name, province, population) VALUES
+INSERT OR IGNORE INTO city (id, name, province, population) VALUES
     ('CITY-NT', 'Neo-Terra Megacity', 'Helix District', 9870000),
     ('CITY-AX', 'Axios Canal Urban Zone', 'Reclaimer Province', 2100000);
 
 -- Human resources
-INSERT INTO human_resources (id, name, surname, role, social_security_code, disabilities) VALUES
+INSERT OR IGNORE INTO human_resources (id, name, surname, role, social_security_code, disabilities) VALUES
     ('HR-001', 'Mira', 'Solace', 'Operations Supervisor', 'NT-8834-9921', 0),
     ('HR-002', 'Daxon', 'Wilde', 'Night Shift Coordinator', 'NT-5541-1884', 0),
     ('HR-003', 'Eli',   'Kale',  'Accessibility Liaison', 'NT-3377-0455', 1);
 
 -- Docking stations
-INSERT INTO docking_stations (
+INSERT OR IGNORE INTO docking_stations (
     id, name, city_id, shift_human_supervisor_id,
     total_spaces, free_spaces, occupied_spaces,
     off_peak_rate, peak_rate,
@@ -84,7 +84,7 @@ INSERT INTO docking_stations (
      1200,  410,  790, 32.00, 45.00, '05:00', '23:00', 1);
 
 -- Pricing (baseline & add-ons)
-INSERT INTO prices (id, docking_station_id, vehicle_class, period, rate_per_hour) VALUES
+INSERT OR IGNORE INTO prices (id, docking_station_id, vehicle_class, period, rate_per_hour) VALUES
     ('PRC-NEO-G_STD-OFF', 'DS-NEO-01', 'Standard Groundcar (G1-G3)',         'off_peak',    24.00),
     ('PRC-NEO-G_STD-PEAK','DS-NEO-01', 'Standard Groundcar (G1-G3)',         'peak',        36.00),
     ('PRC-NEO-H2-OFF',    'DS-NEO-01', 'Hovercraft & Lev-Bike (H2)',         'off_peak',    32.00),
@@ -103,7 +103,7 @@ INSERT INTO prices (id, docking_station_id, vehicle_class, period, rate_per_hour
     ('PRC-AX-ADD-LOAD',   'DS-AX-02',  'Add-on: Loading Dock Priority',      'per_hour',     8.00);
 
 -- Reservations
-INSERT INTO reservations (
+INSERT OR IGNORE INTO reservations (
     id, docking_station_id, customer_name, vehicle_class,
     arrival_start, arrival_end, estimated_departure,
     booking_channel, payment_method, status, enhancements, created_at

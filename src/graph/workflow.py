@@ -33,7 +33,6 @@ def build_graph(
     builder.add_node("approval_request", approval_request_node)
     builder.add_node("hitl", hitl_node)
 
-    # ✅ FIXED TYPO HERE
     builder.add_node("persist_reservation", persist_node)
 
     builder.add_node("approve_response", approve_response_node)
@@ -55,6 +54,8 @@ def build_graph(
     )
 
     builder.add_edge("chatbot", END)
+    builder.add_edge("reservation", "approval_request")
+    builder.add_edge("approval_request", "hitl")
 
     builder.add_conditional_edges(
         "hitl",
@@ -78,4 +79,4 @@ def build_graph(
     builder.add_edge("reject_response", END)
     builder.add_edge("persistence_failure_response", END)
 
-    return builder.compile(checkpointer=checkpointer)
+    return builder.compile(checkpointer=checkpointer, interrupt_before=["hitl"])

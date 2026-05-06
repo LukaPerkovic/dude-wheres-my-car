@@ -14,10 +14,18 @@ class ExtractedFields(BaseModel):
     """Parking reservation fields found in the user's message."""
 
     name: Optional[str] = Field(None, description="First name if explicitly mentioned")
-    surname: Optional[str] = Field(None, description="Last / family name if explicitly mentioned")
-    vehicle_plate: Optional[str] = Field(None, description="Vehicle license plate if mentioned")
-    date_start: Optional[str] = Field(None, description="Reservation start date if mentioned")
-    date_end: Optional[str] = Field(None, description="Reservation end date if mentioned")
+    surname: Optional[str] = Field(
+        None, description="Last / family name if explicitly mentioned"
+    )
+    vehicle_plate: Optional[str] = Field(
+        None, description="Vehicle license plate if mentioned"
+    )
+    date_start: Optional[str] = Field(
+        None, description="Reservation start date if mentioned"
+    )
+    date_end: Optional[str] = Field(
+        None, description="Reservation end date if mentioned"
+    )
 
 
 REQUIRED_FIELDS: dict[str, str] = {
@@ -51,7 +59,6 @@ class ReservationAgent:
     def __init__(self, llm: BaseChatModel) -> None:
         self.extractor = llm.with_structured_output(ExtractedFields)
 
-    
     def __call__(self, state: ParkingState) -> dict:
         existing = state.get("reservation") or {}
         last_msg = state["messages"][-1]
@@ -65,7 +72,7 @@ class ReservationAgent:
                 "reservation": merged,
                 "reservation_status": "pending_approval",
                 "reservation_id": str(uuid4()),
-                "messages": [AIMessage(content=self._format_summary(merged))]
+                "messages": [AIMessage(content=self._format_summary(merged))],
             }
 
         return {
@@ -75,22 +82,20 @@ class ReservationAgent:
                 AIMessage(content=self._format_ask(missing, is_first_turn=not existing))
             ],
         }
-    
+
     def _extract(self, message: str, existing: dict) -> ExtractedFields:
         return self.extractor.invoke(
             [
-                SystemMessage(
-                    content=EXTRACTION_SYSTEM.format(existing=existing)
-                ),
+                SystemMessage(content=EXTRACTION_SYSTEM.format(existing=existing)),
                 HumanMessage(content=message),
             ]
         )
-    
+
     @staticmethod
-    def _merge(existing: dict, extraced: ExtractedFields) -> dict:
+    def _merge(existing: dict, extracted: ExtractedFields) -> dict:
         """Overlay non-None extracted values onto existing data."""
         merged = {**existing}
-        for field, value in extraced.model_dump().items():
+        for field, value in extracted.model_dump().items():
             if value is not None:
                 merged[field] = value
 
@@ -102,7 +107,7 @@ class ReservationAgent:
 
     @staticmethod
     def _format_ask(missing: list[str], *, is_first_turn: bool) -> str:
-        friendly = [REQUIRED_FIELDS[f] for f in missing] 
+        friendly = [REQUIRED_FIELDS[f] for f in missing]
         joined = ", ".join(friendly)
 
         if is_first_turn:
@@ -110,7 +115,7 @@ class ReservationAgent:
                 "I'd be happy to help you reserve a parking spot! "
                 "I'll need your {joined}. "
             )
-        
+
         return f"Thanks! I still need your {joined}."
 
     @staticmethod

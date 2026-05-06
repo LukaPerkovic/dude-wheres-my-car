@@ -16,7 +16,6 @@ from fastapi.security import HTTPBasic, HTTPBasicCredentials
 
 from src.config import Settings
 
-
 _security = HTTPBasic()
 _settings = Settings()
 

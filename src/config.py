@@ -7,8 +7,8 @@ class Settings(BaseSettings):
     anthropic_api_key: str
 
     router_model: str = "claude-haiku-4-5-20251001"
-    rag_model: str = "claude-sonnet-4-6"
-    agent_model: str = "claude-sonnet-4-6"
+    rag_model: str = "claude-haiku-4-5-20251001"  # "claude-sonnet-4-6"
+    agent_model: str = "claude-haiku-4-5-20251001"  # "claude-sonnet-4-6"
 
     reranker_model: str = "cross-encoder/ms-marco-MiniLM-L-6-v2"
     embedding_model: str = "BAAI/bge-small-en-v1.5"

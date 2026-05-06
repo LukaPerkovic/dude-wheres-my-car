@@ -75,7 +75,7 @@ def build_chroma_vector_index(nodes=None, collection_name: str = "parking_docs")
     storage_context = StorageContext.from_defaults(vector_store=vector_store)
 
     if nodes is not None:
-        index = VectorStoreIndex(nodes=nodes, storage_conext=storage_context)
+        index = VectorStoreIndex(nodes=nodes, storage_context=storage_context)
     else:
         index = VectorStoreIndex.from_vector_store(vector_store=vector_store)
 
