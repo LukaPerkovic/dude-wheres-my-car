@@ -16,6 +16,8 @@ MCP_AUTH_TOKEN = os.getenv("MCP_AUTH_TOKEN", "")
 
 mcp = FastMCP(
     "ReservationWriter",
+    host="mcp-server",
+    port=8000,
 )
 
 

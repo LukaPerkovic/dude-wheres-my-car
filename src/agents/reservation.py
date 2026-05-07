@@ -40,6 +40,7 @@ REQUIRED_FIELDS: dict[str, str] = {
 EXTRACTION_SYSTEM = (
     "You are extracting parking reservation details from a user's message.\n"
     "Only extract fields the user explicitly provides.\n"
+    "If a field is missing, you MUST output null. Do not use 'unknown', 'N/A' or 'none'"
     "If the user corrects a previously given value, return the corrected value.\n"
     "Do not guess or fabricate any information.\n\n"
     "Already collected: {existing}"
@@ -60,6 +61,10 @@ class ReservationAgent:
         self.extractor = llm.with_structured_output(ExtractedFields)
 
     def __call__(self, state: ParkingState) -> dict:
+        status = state.get("reservation_status")
+        if status in ("approved", "rejected"):
+            return {"messages": [AIMessage(content=f"Your reservation is {status}")]}
+
         existing = state.get("reservation") or {}
         last_msg = state["messages"][-1]
 
@@ -96,7 +101,12 @@ class ReservationAgent:
         """Overlay non-None extracted values onto existing data."""
         merged = {**existing}
         for field, value in extracted.model_dump().items():
-            if value is not None:
+            if value and str(value).strip().lower() not in (
+                "unknown",
+                "none",
+                "n/a",
+                "null",
+            ):
                 merged[field] = value
 
         return merged
@@ -113,7 +123,7 @@ class ReservationAgent:
         if is_first_turn:
             return (
                 "I'd be happy to help you reserve a parking spot! "
-                "I'll need your {joined}. "
+                f"I'll need your {joined}. "
             )
 
         return f"Thanks! I still need your {joined}."

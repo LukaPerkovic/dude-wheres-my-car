@@ -4,9 +4,12 @@ from langgraph.graph import StateGraph, START, END
 from langgraph.checkpoint.memory import MemorySaver
 
 from src.memory.state import ParkingState
-from src.graph.edges import (route_intent,
-                             route_after_hitl,
-                            route_after_persist)
+from src.graph.edges import (
+    route_intent,
+    route_after_hitl,
+    route_after_persist,
+    check_reservation_complete,
+)
 
 
 def build_graph(
@@ -54,7 +57,16 @@ def build_graph(
     )
 
     builder.add_edge("chatbot", END)
-    builder.add_edge("reservation", "approval_request")
+    builder.add_conditional_edges(
+        "reservation",
+        check_reservation_complete,
+        {
+            "collecting": END,
+            "pending_approval": "approval_request",
+            "approved": END,
+            "rejected": END,
+        },
+    )
     builder.add_edge("approval_request", "hitl")
 
     builder.add_conditional_edges(

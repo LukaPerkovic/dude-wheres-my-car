@@ -4,7 +4,7 @@ from unittest.mock import MagicMock, patch
 
 
 def test_create_sql_query_engine_targets_spaces_table():
-    """NLSQLTableQueryEngine must be initialised with the 'spaces' table."""
+    """NLSQLTableQueryEngine must be initialised with the 'city' table."""
     with (
         patch("src.rag.query_engine.create_engine"),
         patch("src.rag.query_engine.SQLDatabase"),
@@ -19,7 +19,7 @@ def test_create_sql_query_engine_targets_spaces_table():
 
     mock_nl_cls.assert_called_once()
     _, kwargs = mock_nl_cls.call_args
-    assert "spaces" in kwargs.get("tables", [])
+    assert "city" in kwargs.get("tables", [])
     assert result is mock_nl_cls.return_value
 
 

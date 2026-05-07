@@ -86,6 +86,7 @@ def approve_reservation(thread_id: str, _: str = Depends(require_admin)):
         Command(resume={"approved": True}),
         config=config,
     )
+    # result = graph.invoke({"reservation_status": "approved"})
     return {"status": "approved", "message": result["messages"][-1].content}
 
 
@@ -103,6 +104,9 @@ def reject_reservation(
     result = graph.invoke(
         Command(resume={"approved": False, "reason": reason}), config=config
     )
+    # result = graph.invoke(
+    #     {"reservation_status": "rejected", "rejection_status": reason}, config=config
+    # )
     return {"status": "rejected", "message": result["messages"][-1].content}
 
 

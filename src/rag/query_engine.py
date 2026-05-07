@@ -7,7 +7,7 @@ from llama_index.core.postprocessor import (
 from sqlalchemy import create_engine
 from llama_index.core import SQLDatabase
 from llama_index.core.query_engine import NLSQLTableQueryEngine, RouterQueryEngine
-from llama_index.core.selectors import PydanticSingleSelector
+from llama_index.core.selectors import LLMSingleSelector
 from llama_index.core.tools import QueryEngineTool
 
 
@@ -62,14 +62,20 @@ def create_sql_query_engine():
 
     return NLSQLTableQueryEngine(
         sql_database=sql_database,
-        tables=["spaces"],
+        tables=[
+            "city",
+            "human_resources",
+            "docking_stations",
+            "prices",
+            "reservations",
+        ],
     )
 
 
 def create_hybrid_query_engine(vector_args: dict = {}, sql_args: dict = {}):
     """
     RouterQueryEngine picks ONE tool per query based on descriptions.
-    PydanticSingleSelector uses structured output for reliable tool selection —
+    LLMSingleSelector uses structured output for reliable tool selection —
     more deterministic than plain LLMSingleSelector.
     """
 
@@ -93,7 +99,7 @@ def create_hybrid_query_engine(vector_args: dict = {}, sql_args: dict = {}):
     ]
 
     return RouterQueryEngine(
-        selector=PydanticSingleSelector.from_defaults(),
+        selector=LLMSingleSelector.from_defaults(),
         query_engine_tools=tools,
         verbose=True,
     )

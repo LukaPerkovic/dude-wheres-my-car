@@ -3,7 +3,7 @@
 import os
 import asyncio
 
-from mcp_server import ClientSession
+from mcp import ClientSession
 from mcp.client.sse import sse_client
 
 MCP_SERVER_URL = os.getenv("MCP_SERVER_URL", "http://mcp-server:8000/sse")
