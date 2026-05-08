@@ -63,8 +63,7 @@ def reject_response_node(state: ParkingState) -> dict:
         "messages": [
             AIMessage(
                 content=(
-                    "Unfortunately your reservation was declined.\n"
-                    f"Reason: {reason}"
+                    f"Unfortunately your reservation was declined.\nReason: {reason}"
                 )
             )
         ]

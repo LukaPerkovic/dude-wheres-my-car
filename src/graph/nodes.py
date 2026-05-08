@@ -10,26 +10,23 @@ ROUTER_SYSTEM = (
     "Reply with ONLY that one word, nothing else."
 )
 
+
 class RouterNode:
     """Classifies user intent. Stays in reservation flow if already collecting."""
 
     def __init__(self, llm: BaseChatModel) -> None:
         self.llm = llm
 
-    
     def __call__(self, state: ParkingState) -> dict:
         if state.get("reservation_status") == "collecting":
             return {"intent": "reservation"}
 
         response = self.llm.invoke(
-            [
-                SystemMessage(content=ROUTER_SYSTEM),
-                state["messages"][-1]
-            ]
+            [SystemMessage(content=ROUTER_SYSTEM), state["messages"][-1]]
         )
 
         intent = response.content.strip().lower()
         if intent not in ("info", "reservation"):
             intent = "info"
-        
+
         return {"intent": intent}

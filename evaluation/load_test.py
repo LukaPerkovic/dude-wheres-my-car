@@ -23,7 +23,7 @@ class ChatbotUser(HttpUser):
 
         unique_thread_id = str(uuid.uuid4())
 
-        payload = {"message": "", "thread_id": "locust-test-"}
+        payload = {"message": question, "thread_id": f"locust-test-{unique_thread_id}"}
 
         with self.client.post("/chat", json=payload, catch_response=True) as response:
             if response.status_code == 200:

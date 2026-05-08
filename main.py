@@ -39,13 +39,13 @@ guardrails, query_engine = build_pipeline(PipelineConfig())
 
 class LoggingNotificationChannel:
     def send_approval_request(self, reservation_id: str, details: dict) -> bool:
-        print(f"\n{'='*50}")
+        print(f"\n{'=' * 50}")
         print(" ADMIN APPROVAL REQUEST")
         print(f"   Reservation ID: {reservation_id}")
         print(f"   Name: {details.get('name')} {details.get('surname')}")
         print(f"   Plate: {details.get('vehicle_plate')}")
         print(f"   Dates: {details.get('date_start')} → {details.get('date_end')}")
-        print(f"{'='*50}\n")
+        print(f"{'=' * 50}\n")
         return True
 
 
