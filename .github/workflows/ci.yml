@@ -52,7 +52,7 @@ jobs:
         env:
           ANTHROPIC_API_KEY: "fake"
           ADMIN_PASSWORD: "fake"
-        run: uv run pytest tests/ --coverage --coverage-report=term-missing
+        run: uv run pytest tests/
 
   docker-build:
     runs-on: ubuntu-latest
