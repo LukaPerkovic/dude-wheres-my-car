@@ -10,7 +10,6 @@ def test_create_sql_query_engine_targets_spaces_table():
         patch("src.rag.query_engine.SQLDatabase"),
         patch("src.rag.query_engine.NLSQLTableQueryEngine") as mock_nl_cls,
     ):
-
         mock_nl_cls.return_value = MagicMock()
 
         from src.rag.query_engine import create_sql_query_engine
@@ -32,7 +31,6 @@ def test_create_vector_query_engine_skips_loading_when_collection_has_data():
         patch("src.rag.query_engine.load_and_chunk_documents") as mock_load,
         patch("src.rag.query_engine.SentenceTransformerRerank"),
     ):
-
         mock_store.return_value._collection.count.return_value = 10
         mock_build.return_value.as_query_engine.return_value = MagicMock()
 

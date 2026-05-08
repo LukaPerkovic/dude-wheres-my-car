@@ -71,15 +71,6 @@ def run_rag_evaluation(
             # blocked queries score 0 across the board
             pass
 
-        elif source_type == "sql":
-            response_text = (out.get("response") or "").lower()
-            # Normalize numbers and separators
-            norm_response = response_text.replace(",", "").replace("_", " ")
-            hit = any(
-                r.lower().replace(",", "").replace("_", " ") in norm_response
-                for r in refs
-            )
-
         else:  # vector
             nodes = out.get("source_nodes") or []
             if nodes:

@@ -28,7 +28,6 @@ def test_load_and_chunk_returns_nodes_for_valid_parser():
             "src.rag.indexer.parsers_map", {"sentence_splitter": mock_parser_cls}
         ),
     ):
-
         mock_reader.return_value.load_data.return_value = [MagicMock()]
 
         from src.rag.indexer import load_and_chunk_documents
