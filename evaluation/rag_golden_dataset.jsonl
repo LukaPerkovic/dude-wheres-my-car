@@ -1,0 +1,20 @@
+{"id": "v1", "question": "Where can I find information about parking rules?", "reference": "Parking rules vary by location", "source_type": "vector"}
+{"id": "v2", "question": "How does the parking booking process work?", "reference": "Reservation Channels", "source_type": "vector"}
+{"id": "v3", "question": "Can I cancel my parking reservation?", "reference": "Cancellation & Modification Policy", "source_type": "vector"}
+{"id": "v4", "question": "Are there time limits for parking?", "reference": "Some parking locations enforce time limits", "source_type": "vector"}
+{"id": "v5", "question": "Do you offer parking for electric vehicles?", "reference": "Electric vehicle charging stations", "source_type": "vector"}
+{"id": "v6", "question": "What happens if I overstay my booked parking time?", "reference": "overstay", "source_type": "vector"}
+{"id": "v7", "question": "Is overnight parking allowed?", "reference": "Overnight parking is permitted", "source_type": "vector"}
+{"id": "v8", "question": "Where are your parking locations listed?", "reference": "Location Details", "source_type": "vector"}
+{"id": "v9", "question": "Are parking fees refundable?", "reference": "Parking fees are non-refundable", "source_type": "vector"}
+{"id": "v10", "question": "How do I contact parking support?", "reference": "You can contact our support team", "source_type": "vector"}
+{"id": "v11", "question": "What documents explain parking regulations?", "reference": "Parking regulations are outlined", "source_type": "vector"}
+{"id": "v12", "question": "Are parking rules the same in every city?", "reference": "Parking rules vary by location", "source_type": "vector"}
+{"id": "v13", "question": "How far in advance can I reserve a parking spot?", "reference": "Standard reservations allow for arrival", "source_type": "vector"}
+{"id": "v14", "question": "What steps are involved in reserving parking?", "reference": "booking process is simple", "source_type": "vector"}
+{"id": "v15", "question": "Is there a deadline for canceling a parking booking?", "reference": "Cancellations are allowed up to", "source_type": "vector"}
+{"id": "sql1", "question": "How many free parking spaces are currently available at Neo-Terra Skyport Parking Complex?", "reference": "1320", "source_type": "sql"}
+{"id": "sql2", "question": "What is the peak hourly rate for a standard groundcar at Neo-Terra Skyport?", "reference": "36.00", "source_type": "sql"}
+{"id": "sql3", "question": "Which docking station has more occupied spaces?", "reference": "Neo-Terra Skyport Parking Complex", "source_type": "sql"}
+{"id": "sql4", "question": "What is the booking status of the reservation made by Helix Dynamics Fleet?", "reference": "checked_in", "source_type": "sql"}
+{"id": "sql5", "question": "Which customer has a reservation for Heavy Freight parking?", "reference": "Chrona Recycling Freight", "source_type": "sql"}

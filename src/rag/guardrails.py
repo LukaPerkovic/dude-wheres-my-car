@@ -5,7 +5,7 @@ Injection: NLI entailment scoring with cross-encoder/nli-deberta-v3-small.
 """
 
 import numpy as np
-from sentence_transformers import CrossEncoder, SentenceTransformer
+from sentence_transformers import SentenceTransformer
 from transformers import pipeline
 from src.config import Settings
 

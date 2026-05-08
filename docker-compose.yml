@@ -49,6 +49,7 @@ services:
         condition: service_healthy
     volumes:
       - ./data:/app/data
+      - ./evaluation:/app/evaluation
     env_file:
       - .env
     environment:

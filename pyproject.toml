@@ -17,6 +17,7 @@ dependencies = [
     "llama-index-embeddings-huggingface>=0.7.0",
     "llama-index-llms-anthropic>=0.11.3",
     "llama-index-vector-stores-chroma>=0.5.5",
+    "locust>=2.43.4",
     "mcp[cli]>=1.27.0",
     "numpy>=2.4.4",
     "pydantic>=2.13.3",

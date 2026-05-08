@@ -16,6 +16,34 @@ def load_dataset(path: str) -> List[Dict[str, Any]]:
     return [json.loads(line) for line in lines if line.strip()]
 
 
+def normalize(s: str) -> str:
+    return " ".join(s.lower().split())
+
+
+def fuzzy_contains(text: str, ref: str, min_overlap: float = 0.5) -> bool:
+    text_n, ref_n = normalize(text), normalize(ref)
+    if ref_n in text_n:  # direct substring hit
+        return True
+    t_words = set(text_n.split())
+    r_words = set(ref_n.split()) - {
+        "a",
+        "an",
+        "the",
+        "is",
+        "are",
+        "by",
+        "in",
+        "of",
+        "to",
+        "you",
+        "can",
+        "my",
+    }
+    if not r_words:
+        return False
+    return len(t_words & r_words) / len(r_words) >= min_overlap
+
+
 # Evaluation for RAG based on retrieval ONLY
 # Consists of precision, recall, and Mean Reciprocal Rank (MRR)
 def run_rag_evaluation(
@@ -24,17 +52,12 @@ def run_rag_evaluation(
     engine,
     k: int = 3,
 ):
-
     per_question = []
     recalls, precisions, mrrs = [], [], []
 
     for row in dataset:
-        if row.get("source_type") != "vector":
-            continue
-
         out = query(row["question"], guardrails, engine, is_eval=_IS_EVAL)
 
-        nodes = out.get("source_nodes") or []
         refs = row["reference"]
         refs = [refs] if isinstance(refs, str) else refs
 
@@ -42,28 +65,72 @@ def run_rag_evaluation(
         precision: float = 0.0
         mrr: float = 0.0
 
-        if not out.get("blocked") and nodes:
-            texts = [n["text"].lower() for n in nodes[:k]]
-            rel = [any(r.lower() in t for r in refs) for t in texts]
+        source_type = row.get("source_type", "vector")
 
-            if any(rel):
-                recall = 1.0
-                precision = sum(rel) / min(k, len(nodes))
-                rank = rel.index(True) + 1
-                mrr = 1.0 / rank
+        if out.get("blocked"):
+            # blocked queries score 0 across the board
+            pass
+
+        elif source_type == "sql":
+            response_text = (out.get("response") or "").lower()
+            # Normalize numbers and separators
+            norm_response = response_text.replace(",", "").replace("_", " ")
+            hit = any(
+                r.lower().replace(",", "").replace("_", " ") in norm_response
+                for r in refs
+            )
+
+        else:  # vector
+            nodes = out.get("source_nodes") or []
+            if nodes:
+                texts = [n["text"].lower() for n in nodes[:k]]
+                rel = [any(fuzzy_contains(t, r) for r in refs) for t in texts]
+
+                if any(rel):
+                    recall = 1.0
+                    precision = sum(rel) / min(k, len(nodes))
+                    rank = rel.index(True) + 1
+                    mrr = 1.0 / rank
 
         recalls.append(recall)
         precisions.append(precision)
         mrrs.append(mrr)
 
         per_question.append(
-            {"id": row["id"], "recall": recall, "precision": precision, "mrr": mrr}
+            {
+                "id": row["id"],
+                "source_type": source_type,
+                "recall": recall,
+                "precision": precision,
+                "mrr": mrr,
+            }
         )
 
+    # Optional: also break out aggregates by source type for clearer diagnostics
+    def _avg(values):
+        return float(np.mean(values)) if values else 0.0
+
+    vec_idx = [i for i, r in enumerate(dataset) if r.get("source_type") != "sql"]
+    sql_idx = [i for i, r in enumerate(dataset) if r.get("source_type") == "sql"]
+
     return {
-        "recall@k": float(np.mean(recalls)) if recalls else 0.0,
-        "precision@k": float(np.mean(precisions)) if precisions else 0.0,
-        "mrr": float(np.mean(mrrs)) if mrrs else 0.0,
+        "recall@k": _avg(recalls),
+        "precision@k": _avg(precisions),
+        "mrr": _avg(mrrs),
+        "by_source_type": {
+            "vector": {
+                "recall@k": _avg([recalls[i] for i in vec_idx]),
+                "precision@k": _avg([precisions[i] for i in vec_idx]),
+                "mrr": _avg([mrrs[i] for i in vec_idx]),
+                "n": len(vec_idx),
+            },
+            "sql": {
+                "recall@k": _avg([recalls[i] for i in sql_idx]),
+                "precision@k": _avg([precisions[i] for i in sql_idx]),
+                "mrr": _avg([mrrs[i] for i in sql_idx]),
+                "n": len(sql_idx),
+            },
+        },
         "per_question": per_question,
     }
 
@@ -74,7 +141,8 @@ def run_rag_evaluation(
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--dataset", default="eval/golden_dataset.jsonl")
+    parser.add_argument("--dataset", default="evaluation/rag_golden_dataset.jsonl")
+    parser.add_argument("--output", default="evaluation/report.json")
     parser.add_argument("--top_k", type=int, default=3)
     parser.add_argument("--chunk_size", type=int, default=256)
     parser.add_argument("--parser_type", default="window_mode")

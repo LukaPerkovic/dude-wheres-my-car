@@ -23,7 +23,10 @@ settings = Settings()  # type: ignore
 
 
 def create_vector_query_engine(
-    similarity_top_k: int = 3, use_window: bool = False, **kwargs
+    similarity_top_k: int = 3,
+    retrieval_top_k: int = 20,
+    use_window: bool = False,
+    **kwargs,
 ):
     """Build the full RAG pipeline and return a query engine."""
 
@@ -45,11 +48,11 @@ def create_vector_query_engine(
         )
 
     postprocessors.append(
-        SentenceTransformerRerank(top_n=3, model=settings.reranker_model)
+        SentenceTransformerRerank(top_n=similarity_top_k, model=settings.reranker_model)
     )
 
     query_engine = index.as_query_engine(
-        similarity_top_k=similarity_top_k,
+        similarity_top_k=retrieval_top_k,
         node_postprocessors=postprocessors,
     )
     return query_engine
