@@ -24,4 +24,7 @@ jobs:
               run: uv sync --frozen
 
             - name: Run Unit Tests
+              env:
+                ANTHROPIC_API_KEY: "fake"
+                ADMIN_PASSWORD: "fake"
               run: uv run pytest tests/

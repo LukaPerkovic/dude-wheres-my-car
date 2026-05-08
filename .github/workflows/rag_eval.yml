@@ -26,6 +26,6 @@ jobs:
             - name: Run RAG Evaluation
               env:
                 ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+                ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
                 PYTHONPATH: .
-              run: |
-                uv run python evaluation/rag_eval.py
+              run: uv run python evaluation/rag_eval.py
